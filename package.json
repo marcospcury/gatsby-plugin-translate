@@ -1,0 +1,27 @@
+{
+  "name": "gatsby-plugin-translate",
+  "version": "0.1.0",
+  "description": "A gatsby plugin to translate source nodes from other plugins automatically using google api",
+  "main": "index.js",
+  "keywords": [
+    "gatsby",
+    "translate",
+    "google",
+    "localization",
+    "gatsby-plugin"
+  ],
+  "scripts": {
+    "test": "jest",
+    "test-watch": "jest --watchAll"
+  },
+  "repository": "marcospcury/gatsby-plugin-translate",
+  "author": "Marcos Cury <marcospcury@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/marcospcury/gatsby-plugin-translate#readme",
+  "dependencies": {
+    "axios": "^0.20.0"
+  },
+  "devDependencies": {
+    "jest": "^26.5.3"
+  }
+}
