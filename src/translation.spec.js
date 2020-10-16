@@ -10,7 +10,7 @@ const {
   emptyArrayNode,
   nullNode,
   undefinedNode,
-} = require('../../__test__/mocks')
+} = require('../__test__/mocks')
 
 jest.mock('./translate-api', () => {
   const getTranslator = () => jest.fn(term => term.toUpperCase())
