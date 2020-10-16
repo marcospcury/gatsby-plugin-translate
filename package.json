@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-translate",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A gatsby plugin to translate source nodes from other plugins automatically using google api",
   "main": "index.js",
   "keywords": [

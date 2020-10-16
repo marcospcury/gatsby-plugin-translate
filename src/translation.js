@@ -65,10 +65,10 @@ async function translateNode(nodeTranslationSpec, node) {
     nodeStructure,
     originLanguage,
     targetLanguage,
-    apiKey,
+    googleApiKey,
   } = nodeTranslationSpec
 
-  translate = getTranslator(originLanguage, targetLanguage, apiKey)
+  translate = getTranslator(originLanguage, targetLanguage, googleApiKey)
 
   const translatedValues = await translateObjectStructure(
     nodeStructure,
