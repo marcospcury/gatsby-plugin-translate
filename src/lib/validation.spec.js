@@ -6,7 +6,7 @@ const {
 const {
   createBasicTranslation,
   createCompleteSpec,
-} = require('../__test__/mocks')
+} = require('../../__test__/mocks')
 
 describe('validation functions', () => {
   describe('getSelectorFromInternalType', () => {
