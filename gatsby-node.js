@@ -1,5 +1,5 @@
-const { getSelectorFromInternalType, validateAndCompileOptions } = require('./lib/validation')
-const { translateNode } = require('./lib/translation')
+const { getSelectorFromInternalType, validateAndCompileOptions } = require('./src/validation')
+const { translateNode } = require('./src/translation')
 
 let hasValidOptions = true
 let compiledOptions = {}
