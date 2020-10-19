@@ -1,5 +1,10 @@
-const { getSelectorFromInternalType, validateAndCompileOptions } = require('./src/validation')
+const {
+  getSelectorFromInternalType,
+  validateAndCompileOptions,
+} = require('./src/validation')
 const { translateNode } = require('./src/translation')
+const crypto = require('crypto')
+const { v4: uuidv4 } = require('uuid')
 
 let hasValidOptions = true
 let compiledOptions = {}
@@ -16,14 +21,22 @@ async function onCreateNode({ node, actions }) {
     const translationSpecs = compiledOptions[currentNode]
 
     if (translationSpecs) {
-      const { createNodeField } = actions
+      const { createNode } = actions
       const translatedValues = await translateNode(translationSpecs, node)
 
-      createNodeField({
-        node,
-        name: translationSpecs.targetLanguage,
-        value: translatedValues,
-      })
+      translatedValues.id = uuidv4()
+      translatedValues.children = []
+      translatedValues.internal = {
+        type: `${node.internal.type}_${translationSpecs.targetLanguage}`,
+        contentDigest: crypto
+          .createHash(`md5`)
+          .update(JSON.stringify(translatedValues))
+          .digest(`hex`),
+      }
+
+      delete translatedValues.parent
+
+      createNode(translatedValues)
     }
   }
 }

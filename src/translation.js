@@ -2,60 +2,42 @@ const { getTranslator } = require('./translate-api')
 
 let translate
 
-async function translateObjectStructure(
-  nodeStructure,
-  origin,
-  target,
-  node,
-  translationStructure = {}
-) {
-  for (const property in nodeStructure) {
-    if (isStringNode(node, property)) {
-      if (nodeStructure[property]) {
-        translationStructure[property] = await translate(node[property])
+async function translateObjectStructure(structure, node, translation = {}) {
+  for (const prop in node) {
+    if (isObjectNode(structure, prop)) {
+      if (isArrayNode(node, prop)) {
+        const asyncMap = node[prop].map(
+          async nodeItem =>
+            await translateObjectStructure(structure[prop], nodeItem)
+        )
+        translation[prop] = await Promise.all(asyncMap)
       } else {
-        translationStructure[property] = node[property]
+        translation[prop] = {}
+        await translateObjectStructure(
+          structure[prop],
+          node[prop],
+          translation[prop]
+        )
       }
     } else {
-      if (isArrayNode(node, property)) {
-        if (nodeStructure[property]) {
-          const translationAsyncResults = node[property].map(async nodeItem => {
-            if (typeof nodeItem === 'string') {
-              return await translate(nodeItem)
-            } else {
-              return await translateObjectStructure(
-                nodeStructure[property],
-                origin,
-                target,
-                nodeItem
-              )
-            }
-          })
-
-          translationStructure[property] = await Promise.all(
-            translationAsyncResults
+      if (isArrayNode(node, prop)) {
+        if (structure[prop]) {
+          const asyncMap = node[prop].map(
+            async nodeItem => await translate(nodeItem)
           )
+          translation[prop] = await Promise.all(asyncMap)
         } else {
-          translationStructure[property] = node[property]
+          translation[prop] = node[prop]
         }
       } else {
-        if (node[property] === null || node[property] === undefined) {
-          translationStructure[property] = node[property]
-        } else {
-          translationStructure[property] = {}
-          await translateObjectStructure(
-            nodeStructure[property],
-            origin,
-            target,
-            node[property],
-            translationStructure[property]
-          )
-        }
+        translation[prop] = structure[prop]
+          ? await translate(node[prop])
+          : node[prop]
       }
     }
   }
 
-  return translationStructure
+  return translation
 }
 
 async function translateNode(nodeTranslationSpec, node) {
@@ -70,12 +52,7 @@ async function translateNode(nodeTranslationSpec, node) {
 
   translate = getTranslator(originLanguage, targetLanguage, googleApiKey)
 
-  const translatedValues = await translateObjectStructure(
-    nodeStructure,
-    originLanguage,
-    targetLanguage,
-    node
-  )
+  const translatedValues = await translateObjectStructure(nodeStructure, node)
 
   return translatedValues
 }
@@ -86,6 +63,10 @@ function isStringNode(node, property) {
 
 function isArrayNode(node, property) {
   return node && node[property] && Array.isArray(node[property])
+}
+
+function isObjectNode(node, property) {
+  return typeof node[property] === 'object'
 }
 
 module.exports = {

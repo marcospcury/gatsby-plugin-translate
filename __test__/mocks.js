@@ -1,26 +1,21 @@
 const basicNodeStructure = {
   prop1: true,
-  prop2: false,
 }
 
 const objectNodeStructure = {
   prop1: true,
   prop2: {
-    propInProp2: false,
     prop2InProp2: true,
   },
 }
 
 const simpleArrayNodeStructure = {
-  prop1: false,
   prop2: true,
 }
 
 const objectArrayNodeStructure = {
-  prop1: false,
   prop2: {
     p1: true,
-    p2: false,
   },
 }
 

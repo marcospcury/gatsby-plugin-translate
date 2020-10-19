@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-translate",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "A gatsby plugin to translate source nodes from other plugins automatically using google api",
   "main": "index.js",
   "keywords": [
@@ -19,7 +19,8 @@
   "license": "MIT",
   "homepage": "https://github.com/marcospcury/gatsby-plugin-translate#readme",
   "dependencies": {
-    "axios": "^0.20.0"
+    "axios": "^0.20.0",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "jest": "^26.5.3"
