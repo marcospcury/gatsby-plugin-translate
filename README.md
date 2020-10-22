@@ -1,5 +1,7 @@
 # Gatsby plugin translate
 
+![NPM](https://img.shields.io/npm/v/gatsby-plugin-translate.svg)
+
 >
 > Feel free to open issues for any questions or ideas
 >
