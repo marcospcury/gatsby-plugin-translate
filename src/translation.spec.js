@@ -17,13 +17,15 @@ jest.mock('./translate-api', () => {
   return { getTranslator }
 })
 
-const { translateNode } = require('./translation')
+const { translateNode, translateSlug } = require('./translation')
+
+const targetLanguage = 'xx'
 
 describe('translation functions', () => {
   describe('translateNode', () => {
     it('Translate a simple node', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, simpleNode)
+      const translated = await translateNode(spec, targetLanguage, simpleNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2).toEqual('value of prop 2')
@@ -31,7 +33,7 @@ describe('translation functions', () => {
 
     it('Translate an object node', async () => {
       const spec = createObjectTranslation()
-      const translated = await translateNode(spec, objectNode)
+      const translated = await translateNode(spec, targetLanguage, objectNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2.propInProp2).toEqual('value inside prop 2')
@@ -40,7 +42,7 @@ describe('translation functions', () => {
 
     it('Translate a simple array node', async () => {
       const spec = createSimpleArrayTranslation()
-      const translated = await translateNode(spec, simpleArrayNode)
+      const translated = await translateNode(spec, targetLanguage, simpleArrayNode)
 
       expect(translated.prop1).toEqual('value of prop 1')
       expect(translated.prop2[0]).toEqual('ITEM 1')
@@ -50,7 +52,7 @@ describe('translation functions', () => {
 
     it('Translate a object array node', async () => {
       const spec = createObjectArrayTranslation()
-      const translated = await translateNode(spec, objectArrayNode)
+      const translated = await translateNode(spec, targetLanguage, objectArrayNode)
 
       expect(translated.prop1).toEqual('value of prop 1')
       expect(translated.prop2[0].p1).toEqual('ITEM 1')
@@ -59,7 +61,7 @@ describe('translation functions', () => {
 
     it('Expect a node with an empty array', async () => {
       const spec = createSimpleArrayTranslation()
-      const translated = await translateNode(spec, emptyArrayNode)
+      const translated = await translateNode(spec, targetLanguage, emptyArrayNode)
 
       expect(translated.prop1).toEqual('value of prop 1')
       expect(translated.prop2.length).toEqual(0)
@@ -67,7 +69,7 @@ describe('translation functions', () => {
 
     it('Expect a node with a null property', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, nullNode)
+      const translated = await translateNode(spec, targetLanguage, nullNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2).toBeNull()
@@ -75,7 +77,7 @@ describe('translation functions', () => {
 
     it('Expect a node with an undefined property', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, undefinedNode)
+      const translated = await translateNode(spec, targetLanguage, undefinedNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2).not.toBeDefined()
@@ -83,16 +85,36 @@ describe('translation functions', () => {
 
     it('Expect a null node', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, null)
+      const translated = await translateNode(spec, targetLanguage, null)
 
       expect(translated).toBeNull()
     })
 
     it('Expect an undefined node', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, undefined)
+      const translated = await translateNode(spec, targetLanguage, undefined)
 
       expect(translated).not.toBeDefined()
+    })
+  })
+
+  describe('translateSlug', () => {
+    it('Translate a given slug', async () => {
+      const slug = await translateSlug('', 'en', 'es', '/path-to-page')
+
+      expect(slug).toEqual('/PATH-TO-PAGE')
+    })
+
+    it('Translate a slug with a trail slash', async () => {
+      const slug = await translateSlug('', 'en', 'es', '/path-to-page/')
+
+      expect(slug).toEqual('/PATH-TO-PAGE')
+    })
+
+    it('Translate a slug with a blank space', async () => {
+      const slug = await translateSlug('', 'en', 'es', '/path-to-page /')
+
+      expect(slug).toEqual('/PATH-TO-PAGE')
     })
   })
 })

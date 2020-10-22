@@ -15,7 +15,7 @@ const mockedAxiosRequest = {
     source: 'source',
     target: 'target',
     format: 'text',
-  })
+  }),
 }
 
 describe('translate api', () => {

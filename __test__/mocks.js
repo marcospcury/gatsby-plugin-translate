@@ -62,12 +62,9 @@ const undefinedNode = {
   prop2: undefined,
 }
 
-
 function createTranslation(spec) {
   return {
     selector: 'nodeSelector',
-    originLanguage: 'en',
-    targetLanguage: 'es',
     nodeStructure: spec,
   }
 }
@@ -90,8 +87,17 @@ function createObjectArrayTranslation() {
 
 function createCompleteSpec(translation) {
   return {
+    sourceLanguage: 'en',
+    targetLanguages: ['es'],
     googleApiKey: 'lorem',
     translations: [translation],
+  }
+}
+
+function createSimpleSpec() {
+  return {
+    sourceLanguage: 'en',
+    targetLanguages: ['es'],
   }
 }
 
@@ -101,6 +107,7 @@ module.exports = {
   createSimpleArrayTranslation,
   createObjectArrayTranslation,
   createCompleteSpec,
+  createSimpleSpec,
   simpleNode,
   objectNode,
   simpleArrayNode,

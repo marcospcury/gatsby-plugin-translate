@@ -1,4 +1,5 @@
 const { getTranslator } = require('./translate-api')
+const { clearSlugSlashes } = require('./utils')
 
 let translate
 
@@ -7,32 +8,23 @@ async function translateObjectStructure(structure, node, translation = {}) {
     if (isObjectNode(structure, prop)) {
       if (isArrayNode(node, prop)) {
         const asyncMap = node[prop].map(
-          async nodeItem =>
-            await translateObjectStructure(structure[prop], nodeItem)
+          async nodeItem => await translateObjectStructure(structure[prop], nodeItem)
         )
         translation[prop] = await Promise.all(asyncMap)
       } else {
         translation[prop] = {}
-        await translateObjectStructure(
-          structure[prop],
-          node[prop],
-          translation[prop]
-        )
+        await translateObjectStructure(structure[prop], node[prop], translation[prop])
       }
     } else {
       if (isArrayNode(node, prop)) {
         if (structure[prop]) {
-          const asyncMap = node[prop].map(
-            async nodeItem => await translate(nodeItem)
-          )
+          const asyncMap = node[prop].map(async nodeItem => await translate(nodeItem))
           translation[prop] = await Promise.all(asyncMap)
         } else {
           translation[prop] = node[prop]
         }
       } else {
-        translation[prop] = structure[prop]
-          ? await translate(node[prop])
-          : node[prop]
+        translation[prop] = structure[prop] ? await translate(node[prop]) : node[prop]
       }
     }
   }
@@ -40,25 +32,16 @@ async function translateObjectStructure(structure, node, translation = {}) {
   return translation
 }
 
-async function translateNode(nodeTranslationSpec, node) {
+async function translateNode(nodeTranslationSpec, targetLanguage, node) {
   if (node === null || node === undefined) return node
 
-  const {
-    nodeStructure,
-    originLanguage,
-    targetLanguage,
-    googleApiKey,
-  } = nodeTranslationSpec
+  const { nodeStructure, originLanguage, googleApiKey } = nodeTranslationSpec
 
   translate = getTranslator(originLanguage, targetLanguage, googleApiKey)
 
   const translatedValues = await translateObjectStructure(nodeStructure, node)
 
   return translatedValues
-}
-
-function isStringNode(node, property) {
-  return node && node[property] && typeof node[property] === 'string'
 }
 
 function isArrayNode(node, property) {
@@ -69,6 +52,14 @@ function isObjectNode(node, property) {
   return typeof node[property] === 'object'
 }
 
+async function translateSlug(googleApiKey, sourceLanguage, targetLanguage, slug) {
+  const translator = getTranslator(sourceLanguage, targetLanguage, googleApiKey)
+  const term = clearSlugSlashes(slug).split('-').join(' ').trim()
+  const translated = await translator(term)
+  return `/${translated.split(' ').join('-')}`
+}
+
 module.exports = {
   translateNode,
+  translateSlug,
 }

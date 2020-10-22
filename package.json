@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-translate",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A gatsby plugin to translate source nodes from other plugins automatically using google api",
   "main": "index.js",
   "keywords": [
@@ -8,11 +8,14 @@
     "translate",
     "google",
     "localization",
-    "gatsby-plugin"
+    "gatsby-plugin",
+    "multilanguage",
+    "multilingual"
   ],
   "scripts": {
     "test": "jest",
-    "test-watch": "jest --watchAll"
+    "test-watch": "jest --watchAll",
+    "prepare": "install-peers"
   },
   "repository": "marcospcury/gatsby-plugin-translate",
   "author": "Marcos Cury <marcospcury@gmail.com>",
@@ -23,6 +26,10 @@
     "uuid": "^8.3.1"
   },
   "devDependencies": {
+    "install-peers-cli": "^2.2.0",
     "jest": "^26.5.3"
+  },
+  "peerDependencies": {
+    "react": "^16.12.0"
   }
 }
