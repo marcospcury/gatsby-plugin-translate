@@ -19,13 +19,11 @@ jest.mock('./translate-api', () => {
 
 const { translateNode, translateSlug } = require('./translation')
 
-const targetLanguage = 'xx'
-
 describe('translation functions', () => {
   describe('translateNode', () => {
     it('Translate a simple node', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, targetLanguage, simpleNode)
+      const translated = await translateNode(spec, simpleNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2).toEqual('value of prop 2')
@@ -33,7 +31,7 @@ describe('translation functions', () => {
 
     it('Translate an object node', async () => {
       const spec = createObjectTranslation()
-      const translated = await translateNode(spec, targetLanguage, objectNode)
+      const translated = await translateNode(spec, objectNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2.propInProp2).toEqual('value inside prop 2')
@@ -42,7 +40,7 @@ describe('translation functions', () => {
 
     it('Translate a simple array node', async () => {
       const spec = createSimpleArrayTranslation()
-      const translated = await translateNode(spec, targetLanguage, simpleArrayNode)
+      const translated = await translateNode(spec, simpleArrayNode)
 
       expect(translated.prop1).toEqual('value of prop 1')
       expect(translated.prop2[0]).toEqual('ITEM 1')
@@ -52,7 +50,7 @@ describe('translation functions', () => {
 
     it('Translate a object array node', async () => {
       const spec = createObjectArrayTranslation()
-      const translated = await translateNode(spec, targetLanguage, objectArrayNode)
+      const translated = await translateNode(spec, objectArrayNode)
 
       expect(translated.prop1).toEqual('value of prop 1')
       expect(translated.prop2[0].p1).toEqual('ITEM 1')
@@ -61,7 +59,7 @@ describe('translation functions', () => {
 
     it('Expect a node with an empty array', async () => {
       const spec = createSimpleArrayTranslation()
-      const translated = await translateNode(spec, targetLanguage, emptyArrayNode)
+      const translated = await translateNode(spec, emptyArrayNode)
 
       expect(translated.prop1).toEqual('value of prop 1')
       expect(translated.prop2.length).toEqual(0)
@@ -69,7 +67,7 @@ describe('translation functions', () => {
 
     it('Expect a node with a null property', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, targetLanguage, nullNode)
+      const translated = await translateNode(spec, nullNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2).toBeNull()
@@ -77,7 +75,7 @@ describe('translation functions', () => {
 
     it('Expect a node with an undefined property', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, targetLanguage, undefinedNode)
+      const translated = await translateNode(spec, undefinedNode)
 
       expect(translated.prop1).toEqual('VALUE OF PROP 1')
       expect(translated.prop2).not.toBeDefined()
@@ -85,14 +83,14 @@ describe('translation functions', () => {
 
     it('Expect a null node', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, targetLanguage, null)
+      const translated = await translateNode(spec, null)
 
       expect(translated).toBeNull()
     })
 
     it('Expect an undefined node', async () => {
       const spec = createBasicTranslation()
-      const translated = await translateNode(spec, targetLanguage, undefined)
+      const translated = await translateNode(spec, undefined)
 
       expect(translated).not.toBeDefined()
     })

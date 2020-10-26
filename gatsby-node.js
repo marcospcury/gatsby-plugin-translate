@@ -1,82 +1,67 @@
+const { validateOptions } = require('./src/validation')
+
 const {
   getSelectorFromInternalType,
-  validateAndCompileOptions,
-} = require('./src/validation')
+  addTargetLanguage,
+  addCommonOptions,
+  translate,
+  addNodeMetadata,
+  saveTranslatedRoutes,
+  deleteTranslatedRoutes,
+  setStaticTranslations,
+  getStaticTranslations,
+  getSlugTranslator,
+  getTranslation,
+} = require('./src/node-functions')
 
-const { translateNode, translateSlug } = require('./src/translation')
-const { clearSlugSlashes } = require('./src/utils')
-
-const crypto = require('crypto')
-const { v4: uuidv4 } = require('uuid')
-
-const fs = require('fs')
+const { clearSlugSlashes, then, all, apply, pipe } = require('./src/utils')
 
 let hasValidOptions = true
-let compiledOptions = {}
-let translatedPaths = []
+let translatedRoutes = []
 
-function onPreInit(_, options) {
-  const { valid, compiled } = validateAndCompileOptions(options)
-  hasValidOptions = valid
-  compiledOptions = compiled
+async function onPreInit({ cache }, options) {
+  hasValidOptions = validateOptions(options)
+  await setStaticTranslations(cache, options)
 }
 
-async function onCreateNode({ node, actions }) {
+async function onCreateNode({ node, actions: { createNode } }, options) {
   if (hasValidOptions) {
-    const currentNode = getSelectorFromInternalType(node)
-    const translationSpecs = compiledOptions[currentNode]
+    const translation = pipe(getSelectorFromInternalType, getTranslation(options))(node)
 
-    if (translationSpecs) {
-      for (const targetLanguage of translationSpecs.targetLanguages) {
-        const { createNode } = actions
-        const translatedValues = await translateNode(
-          translationSpecs,
-          targetLanguage,
-          node
+    if (translation) {
+      ;(
+        await all(
+          options.targetLanguages
+            .map(addTargetLanguage(translation))
+            .map(addCommonOptions(options))
+            .map(translate(node))
+            .map(then(addNodeMetadata))
         )
-
-        translatedValues.id = uuidv4()
-        translatedValues.children = []
-        translatedValues.parent = null
-        translatedValues.internal = {
-          type: `${node.internal.type}_${targetLanguage}`,
-          contentDigest: crypto
-            .createHash(`md5`)
-            .update(JSON.stringify(translatedValues))
-            .digest(`hex`),
-        }
-
-        createNode(translatedValues)
-      }
+      ).forEach(apply(createNode))
     }
   }
 }
 
 function onPostBootstrap() {
-  fs.writeFileSync(`${__dirname}/translatedRoutes.json`, JSON.stringify(translatedPaths))
+  saveTranslatedRoutes(translatedRoutes)
 }
 
 function onPostBuild() {
-  fs.unlinkSync(`${__dirname}/translatedRoutes.json`)
+  deleteTranslatedRoutes()
 }
 
-async function onCreatePage({ cache, page, actions }) {
+async function onCreatePage({ cache, page, actions }, options) {
   const { createPage, deletePage } = actions
 
-  const slugTranslator = compiledOptions.translateSlug
-    ? translateSlug.bind(
-        translateSlug,
-        compiledOptions.googleApiKey,
-        compiledOptions.sourceLanguage
-      )
-    : term => term
+  const slugTranslator = getSlugTranslator(options)
 
   if (
-    !compiledOptions.targetLanguages.includes(page.path.slice(1, 3)) &&
+    !options.targetLanguages.includes(page.path.slice(1, 3)) &&
     !page.context.language
   ) {
-    for (const targetLanguage of compiledOptions.targetLanguages) {
+    for (const targetLanguage of options.targetLanguages) {
       const newSlug = await slugTranslator(targetLanguage, page.path)
+      const staticTranslations = await getStaticTranslations(cache, targetLanguage)
 
       createPage({
         ...page,
@@ -86,12 +71,11 @@ async function onCreatePage({ cache, page, actions }) {
           language: targetLanguage,
           isSourceLanguage: false,
           originalPath: page.path,
-          staticTranslations: compiledOptions.staticTranslations[targetLanguage],
-          cache: cache,
+          staticTranslations: staticTranslations,
         },
       })
 
-      translatedPaths.push({
+      translatedRoutes.push({
         originalPath: clearSlugSlashes(page.path),
         language: targetLanguage,
         translatedPath: `/${targetLanguage}${newSlug}`,
@@ -100,14 +84,15 @@ async function onCreatePage({ cache, page, actions }) {
 
     deletePage(page)
 
+    const staticTranslations = await getStaticTranslations(cache, options.sourceLanguage)
+
     createPage({
       ...page,
       context: {
         ...page.context,
-        language: compiledOptions.sourceLanguage,
+        language: options.sourceLanguage,
         isSourceLanguage: true,
-        staticTranslations:
-          compiledOptions.staticTranslations[compiledOptions.sourceLanguage],
+        staticTranslations: staticTranslations,
         currentPath: page.path,
       },
     })

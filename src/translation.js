@@ -32,16 +32,19 @@ async function translateObjectStructure(structure, node, translation = {}) {
   return translation
 }
 
-async function translateNode(nodeTranslationSpec, targetLanguage, node) {
+async function translateNode(translation, node) {
   if (node === null || node === undefined) return node
 
-  const { nodeStructure, originLanguage, googleApiKey } = nodeTranslationSpec
+  const { nodeStructure, originLanguage, targetLanguage, googleApiKey } = translation
 
   translate = getTranslator(originLanguage, targetLanguage, googleApiKey)
 
   const translatedValues = await translateObjectStructure(nodeStructure, node)
 
-  return translatedValues
+  return {
+    ...translatedValues,
+    language: targetLanguage,
+  }
 }
 
 function isArrayNode(node, property) {

@@ -21,4 +21,14 @@ function clearSlugSlashes(slug) {
   return cleanSlug
 }
 
-module.exports = { log, clearSlugSlashes }
+const then = f => p => p.then(f)
+
+const apply = f => firstArg => f(firstArg)
+
+const exec = f => f()
+
+const all = async promiseArray => await Promise.all(promiseArray)
+
+const pipe = (...fns) => value => fns.reduce((previousValue, fn) => fn(previousValue), value)
+
+module.exports = { log, clearSlugSlashes, then, all, apply, pipe, exec }
