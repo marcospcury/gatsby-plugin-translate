@@ -11,16 +11,21 @@ function getSelectorFromInternalType(node) {
   return node.internal.type.replace('__', '').split('_').join('').toLowerCase()
 }
 
-const addTargetLanguage = translationSpec => targetLanguage => {
-  const spec = { ...translationSpec, targetLanguage }
-  return spec
-}
+const addTargetLanguage = translationSpec => targetLanguage => ({
+  ...translationSpec,
+  targetLanguage,
+})
 
-const addCommonOptions = ({ googleApiKey, sourceLanguage }) => translationSpec => {
-  const spec = { ...translationSpec, googleApiKey, sourceLanguage }
-  console.log(spec)
-  return spec
-}
+const addCommonOptions = ({
+  googleApiKey,
+  sourceLanguage,
+  cacheResolver,
+}) => translationSpec => ({
+  ...translationSpec,
+  googleApiKey,
+  sourceLanguage,
+  cacheResolver,
+})
 
 const translate = node => async spec => {
   return await translateNode(spec, node)
@@ -42,7 +47,10 @@ const addNodeMetadata = node => {
 }
 
 const saveTranslatedRoutes = translatedRoutes => {
-  fs.writeFileSync(`${path.join(__dirname, '../')}/translatedRoutes.json`, JSON.stringify(translatedRoutes))
+  fs.writeFileSync(
+    `${path.join(__dirname, '../')}/translatedRoutes.json`,
+    JSON.stringify(translatedRoutes)
+  )
 }
 
 const deleteTranslatedRoutes = () => {
@@ -80,8 +88,13 @@ const cacheStaticTranslations = cache => async translation => {
 
 const getSlugTranslator = options => {
   return options.translateSlug
-    ? translateSlug.bind(translateSlug, options.googleApiKey, options.sourceLanguage)
-    : term => term
+    ? translateSlug.bind(
+        translateSlug,
+        options.cacheResolver,
+        options.googleApiKey,
+        options.sourceLanguage
+      )
+    : (_, term) => term
 }
 
 const getTranslation = options => nodeSelector => {

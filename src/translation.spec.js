@@ -98,19 +98,19 @@ describe('translation functions', () => {
 
   describe('translateSlug', () => {
     it('Translate a given slug', async () => {
-      const slug = await translateSlug('', 'en', 'es', '/path-to-page')
+      const slug = await translateSlug({}, '', 'en', 'es', '/path-to-page')
 
       expect(slug).toEqual('/PATH-TO-PAGE')
     })
 
     it('Translate a slug with a trail slash', async () => {
-      const slug = await translateSlug('', 'en', 'es', '/path-to-page/')
+      const slug = await translateSlug({}, '', 'en', 'es', '/path-to-page/')
 
       expect(slug).toEqual('/PATH-TO-PAGE')
     })
 
     it('Translate a slug with a blank space', async () => {
-      const slug = await translateSlug('', 'en', 'es', '/path-to-page /')
+      const slug = await translateSlug({}, '', 'en', 'es', '/path-to-page /')
 
       expect(slug).toEqual('/PATH-TO-PAGE')
     })

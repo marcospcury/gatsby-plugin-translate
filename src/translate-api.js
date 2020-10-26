@@ -1,6 +1,7 @@
 const axios = require('axios')
+const crypto = require('crypto')
 
-async function translate(source, target, apiKey, term) {
+async function googleTranslate(source, target, apiKey, term) {
   const translateData = JSON.stringify({
     q: term,
     source: source,
@@ -21,8 +22,30 @@ async function translate(source, target, apiKey, term) {
   return translateResponse.data.data.translations[0].translatedText
 }
 
-function getTranslator(source, target, apiKey) {
-  return translate.bind(translate, source, target, apiKey)
+function getTranslator(cacheResolver, source, target, apiKey) {
+  return translate.bind(translate, cacheResolver, source, target, apiKey)
+}
+
+async function translate(cacheResolver, source, target, apiKey, term) {
+  if (cacheResolver) {
+    const hash = createCacheHash(source, target, term)
+
+    let translation = await cacheResolver.get(hash)
+
+    if (translation) return translation
+
+    translation = await googleTranslate(source, target, apiKey, term)
+
+    await cacheResolver.set(hash, translation)
+
+    return translation
+  }
+
+  return await googleTranslate(source, target, apiKey, term)
+}
+
+function createCacheHash(source, target, term) {
+  return crypto.createHash(`md5`).update(`${source}_${target}_${term}`).digest(`hex`)
 }
 
 module.exports = { getTranslator }

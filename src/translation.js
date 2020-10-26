@@ -35,9 +35,9 @@ async function translateObjectStructure(structure, node, translation = {}) {
 async function translateNode(translation, node) {
   if (node === null || node === undefined) return node
 
-  const { nodeStructure, originLanguage, targetLanguage, googleApiKey } = translation
+  const { nodeStructure, originLanguage, targetLanguage, googleApiKey, cacheResolver } = translation
 
-  translate = getTranslator(originLanguage, targetLanguage, googleApiKey)
+  translate = getTranslator(cacheResolver, originLanguage, targetLanguage, googleApiKey)
 
   const translatedValues = await translateObjectStructure(nodeStructure, node)
 
@@ -55,8 +55,8 @@ function isObjectNode(node, property) {
   return typeof node[property] === 'object'
 }
 
-async function translateSlug(googleApiKey, sourceLanguage, targetLanguage, slug) {
-  const translator = getTranslator(sourceLanguage, targetLanguage, googleApiKey)
+async function translateSlug(cacheResolver, googleApiKey, sourceLanguage, targetLanguage, slug) {
+  const translator = getTranslator(cacheResolver, sourceLanguage, targetLanguage, googleApiKey)
   const term = clearSlugSlashes(slug).split('-').join(' ').trim()
   const translated = await translator(term)
   return `/${translated.split(' ').join('-')}`

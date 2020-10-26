@@ -18,11 +18,12 @@ const mockedAxiosRequest = {
   }),
 }
 
+const hash = '1dc030de5dfd562a554c7665b331ba54'
+
 describe('translate api', () => {
   describe('getTranslator', () => {
-    it('Calls Google translate api with all parameters set', async () => {
-      const translate = getTranslator('source', 'target', '12345')
-
+    beforeEach(() => {
+      axios.mockClear()
       axios.mockResolvedValue({
         data: {
           data: {
@@ -30,11 +31,40 @@ describe('translate api', () => {
           },
         },
       })
+    })
+
+    it('Calls Google translate api with all parameters set', async () => {
+      const translate = getTranslator(undefined, 'source', 'target', '12345')
 
       const translated = await translate('term')
 
       expect(translated).toEqual('term translated')
       expect(axios).toHaveBeenCalledWith(mockedAxiosRequest)
+    })
+
+    it('Calls cache resolver without cached data', async () => {
+      const get = jest.fn()
+      const set = jest.fn()
+
+      const translate = getTranslator({ get, set }, 'source', 'target', '12345')
+      const translated = await translate('term')
+
+      expect(translated).toEqual('term translated')
+      expect(get).toHaveBeenCalledWith(hash)
+      expect(set).toHaveBeenCalledWith(hash, 'term translated')
+    })
+
+    it('Calls cache resolver with cached data', async () => {
+      const get = jest.fn(() => 'term cached')
+      const set = jest.fn()
+
+      const translate = getTranslator({ get, set }, 'source', 'target', '12345')
+      const translated = await translate('term')
+
+      expect(translated).toEqual('term cached')
+      expect(get).toHaveBeenCalledWith(hash)
+      expect(set).not.toHaveBeenCalled()
+      expect(axios).not.toHaveBeenCalled()
     })
   })
 })
