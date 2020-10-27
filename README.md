@@ -1,7 +1,7 @@
 # Gatsby plugin translate
 
 ![NPM](https://img.shields.io/npm/v/gatsby-plugin-translate.svg)
-![build](https://github.com/marcospcury/gatsby-plugin-translate/workflows/Node.js%20Package/badge.svg)
+![build](https://github.com/marcospcury/gatsby-plugin-translate/workflows/build/badge.svg)
 
 >
 > Feel free to open issues for any questions or ideas
