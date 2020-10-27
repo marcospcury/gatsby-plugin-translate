@@ -12,7 +12,7 @@ const TranslateLink = props => {
   const translatedRoutes = useTranslatedRoutesContext()
   const { language, isSourceLanguage } = useTranslateContext()
 
-  if (!translatedRoutes) {
+  if (!Array.isArray(translatedRoutes)) {
     return <Link {...props}>{props.children}</Link>
   }
 
