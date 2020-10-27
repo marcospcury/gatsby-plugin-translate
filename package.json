@@ -19,7 +19,7 @@
     "test": "jest",
     "test-watch": "jest --watchAll",
     "prepare": "npm build",
-    "build": "babel src --out-dir . --ignore \"**/__tests__\",**/__mocks__"
+    "build": "babel src --out-dir . --ignore \"**.spec.js\""
   },
   "repository": "marcospcury/gatsby-plugin-translate",
   "author": "Marcos Cury <marcospcury@gmail.com>",
