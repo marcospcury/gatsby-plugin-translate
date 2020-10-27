@@ -1,3 +1,7 @@
+require(`@babel/register`)({
+  presets: ['@babel/preset-react'],
+})
+
 const React = require('react')
 const { Link } = require('gatsby')
 
