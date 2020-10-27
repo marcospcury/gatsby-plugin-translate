@@ -1,7 +1,3 @@
-require(`@babel/register`)({
-  presets: ['@babel/preset-react'],
-})
-
 const React = require('react')
 
 const { useTranslateContext } = require('../contexts/translate-context')
