@@ -1,4 +1,4 @@
-const { validateOptions } = require('./src/validation')
+const { validateOptions } = require('./validation')
 
 const {
   getSelectorFromInternalType,
@@ -12,9 +12,9 @@ const {
   getStaticTranslations,
   getSlugTranslator,
   getTranslation,
-} = require('./src/node-functions')
+} = require('./node-functions')
 
-const { clearSlugSlashes, then, all, apply, pipe } = require('./src/utils')
+const { clearSlugSlashes, then, all, apply, pipe } = require('./utils')
 
 let hasValidOptions = true
 let translatedRoutes = []

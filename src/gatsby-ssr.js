@@ -1,8 +1,7 @@
 const React = require('react')
-const path = require('path')
 
-const { TranslateProvider } = require('./src/contexts/translate-context')
-const { TranslatedRoutesProvider } = require('./src/contexts/translated-routes-context')
+const { TranslateProvider } = require('./contexts/translate-context')
+const { TranslatedRoutesProvider } = require('./contexts/translated-routes-context')
 
 exports.wrapPageElement = ({ element, props }) => {
   const translateState = {
@@ -17,9 +16,7 @@ exports.wrapPageElement = ({ element, props }) => {
 }
 
 exports.wrapRootElement = ({ element }) => {
-  const translatedRoutes = require(`${path.dirname(
-    require.main.path
-  )}/translatedRoutes.json`)
+  const translatedRoutes = require(`${__dirname}/translatedRoutes.json`)
 
   return (
     <TranslatedRoutesProvider translatedRoutes={translatedRoutes}>
