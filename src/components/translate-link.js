@@ -12,6 +12,10 @@ const TranslateLink = props => {
   const translatedRoutes = useTranslatedRoutesContext()
   const { language, isSourceLanguage } = useTranslateContext()
 
+  if (!translatedRoutes) {
+    return <Link {...props}>{props.children}</Link>
+  }
+
   const { to: originalRoute, ...rest } = props
 
   const translatedRoute = translatedRoutes.find(
