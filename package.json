@@ -18,7 +18,6 @@
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watchAll",
-    "prepare": "npm build",
     "build": "babel src --out-dir . --ignore \"**.spec.js\""
   },
   "repository": "marcospcury/gatsby-plugin-translate",
