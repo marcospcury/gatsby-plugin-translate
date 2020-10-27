@@ -114,5 +114,17 @@ describe('translation functions', () => {
 
       expect(slug).toEqual('/PATH-TO-PAGE')
     })
+
+    it('Translate a slug with two elements', async () => {
+      const slug = await translateSlug({}, '', 'en', 'es', '/path-to-page /sub-path')
+
+      expect(slug).toEqual('/PATH-TO-PAGE/SUB-PATH')
+    })
+
+    it('Translate a slug with three elements', async () => {
+      const slug = await translateSlug({}, '', 'en', 'es', '/path-to-page /sub-path/ another-sub')
+
+      expect(slug).toEqual('/PATH-TO-PAGE/SUB-PATH/ANOTHER-SUB')
+    })
   })
 })

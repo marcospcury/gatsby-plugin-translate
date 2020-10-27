@@ -1,5 +1,5 @@
 const { getTranslator } = require('./translate-api')
-const { clearSlugSlashes } = require('./utils')
+const { clearSlugSlashes, all } = require('./utils')
 
 let translate
 
@@ -35,7 +35,13 @@ async function translateObjectStructure(structure, node, translation = {}) {
 async function translateNode(translation, node) {
   if (node === null || node === undefined) return node
 
-  const { nodeStructure, originLanguage, targetLanguage, googleApiKey, cacheResolver } = translation
+  const {
+    nodeStructure,
+    originLanguage,
+    targetLanguage,
+    googleApiKey,
+    cacheResolver,
+  } = translation
 
   translate = getTranslator(cacheResolver, originLanguage, targetLanguage, googleApiKey)
 
@@ -55,11 +61,35 @@ function isObjectNode(node, property) {
   return typeof node[property] === 'object'
 }
 
-async function translateSlug(cacheResolver, googleApiKey, sourceLanguage, targetLanguage, slug) {
-  const translator = getTranslator(cacheResolver, sourceLanguage, targetLanguage, googleApiKey)
+async function translateSlug(
+  cacheResolver,
+  googleApiKey,
+  sourceLanguage,
+  targetLanguage,
+  slug
+) {
+  const translator = getTranslator(
+    cacheResolver,
+    sourceLanguage,
+    targetLanguage,
+    googleApiKey
+  )
   const term = clearSlugSlashes(slug).split('-').join(' ').trim()
-  const translated = await translator(term)
-  return `/${translated.split(' ').join('-')}`
+
+  if (term.includes('/')) {
+    const pathElements = term.split('/')
+    const translatedPathElements = await all(
+      pathElements.map(async element => {
+        const translation = await translator(element.trim())
+        return translation.split(' ').join('-')
+      })
+    )
+
+    return `/${translatedPathElements.join('/')}`
+  } else {
+    const translated = await translator(term)
+    return `/${translated.split(' ').join('-')}`
+  }
 }
 
 module.exports = {
