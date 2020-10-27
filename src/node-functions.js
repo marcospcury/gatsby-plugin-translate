@@ -47,14 +47,11 @@ const addNodeMetadata = node => {
 }
 
 const saveTranslatedRoutes = translatedRoutes => {
-  fs.writeFileSync(
-    `${path.join(__dirname, '../')}/translatedRoutes.json`,
-    JSON.stringify(translatedRoutes)
-  )
+  fs.writeFileSync(`${__dirname}/translatedRoutes.json`, JSON.stringify(translatedRoutes))
 }
 
 const deleteTranslatedRoutes = () => {
-  fs.unlinkSync(`${path.join(__dirname, '../')}/translatedRoutes.json`)
+  fs.unlinkSync(`${__dirname}/translatedRoutes.json`)
 }
 
 const setStaticTranslations = async (cache, { targetLanguages }) => {
