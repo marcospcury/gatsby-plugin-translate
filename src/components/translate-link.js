@@ -20,7 +20,11 @@ const TranslateLink = props => {
       route.language === language
   )
 
-  const currentRoute = isSourceLanguage ? originalRoute : translatedRoute.translatedPath
+  const currentRoute = isSourceLanguage
+    ? originalRoute
+    : translatedRoute
+    ? translatedRoute.translatedPath
+    : originalRoute
 
   return (
     <Link to={currentRoute} {...rest}>
