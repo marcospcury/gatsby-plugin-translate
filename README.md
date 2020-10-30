@@ -231,6 +231,27 @@ const MyComponent = () => {
 
 ```
 
+### Cache
+
+Since Google charges the API usage by the number of characters translated, it is a good idea to cache the translation results to avoid calling the API with the same terms on all subsequent builds. You can pass a cache provider with the options, with two async functions `get` and `set`. They should just accept a `(key)` to get a translation from cache, and a `(key, value)` to set it. Feel free to implement any cache solution.
+
+```js
+
+// gatsby-config.js
+
+{
+  resolve: `gatsby-plugin-translate`,
+  options: {
+    // ... other options
+
+    cacheProvider: {
+      get: async (key) => { ... },
+      set: async (key, value) => { ... }
+    }
+  }
+}
+
+```
 
 # Feedback
 

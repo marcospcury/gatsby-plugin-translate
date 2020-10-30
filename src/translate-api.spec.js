@@ -2,8 +2,6 @@ const axios = require('axios')
 
 const { getTranslator } = require('./translate-api')
 
-jest.mock('axios')
-
 const mockedAxiosRequest = {
   method: 'post',
   url: 'https://translation.googleapis.com/language/translate/v2?key=12345',

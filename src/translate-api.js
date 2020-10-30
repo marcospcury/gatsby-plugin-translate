@@ -1,5 +1,15 @@
 const axios = require('axios')
 const crypto = require('crypto')
+const Agent = require('agentkeepalive')
+
+const keepAliveAgent = new Agent({
+  maxSockets: 100,
+  maxFreeSockets: 10,
+  timeout: 60000,
+  freeSocketTimeout: 30000,
+})
+
+const axiosInstance = axios.create({ httpAgent: keepAliveAgent })
 
 async function googleTranslate(source, target, apiKey, term) {
   const translateData = JSON.stringify({
@@ -10,7 +20,7 @@ async function googleTranslate(source, target, apiKey, term) {
   })
 
   const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`
-  const translateResponse = await axios({
+  const translateResponse = await axiosInstance({
     method: 'post',
     url: url,
     headers: {

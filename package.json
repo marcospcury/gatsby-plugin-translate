@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-translate",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "A gatsby plugin to translate source nodes from other plugins automatically using google api",
   "main": "index.js",
   "keywords": [
@@ -18,7 +18,7 @@
   "scripts": {
     "test": "jest",
     "test-watch": "jest --watchAll",
-    "build": "babel src --out-dir . --ignore \"**.spec.js\""
+    "build": "babel src --out-dir . --ignore \"**/*.spec.js\" --ignore \"**/__mocks__\""
   },
   "repository": "marcospcury/gatsby-plugin-translate",
   "author": "Marcos Cury <marcospcury@gmail.com>",
@@ -26,6 +26,7 @@
   "homepage": "https://github.com/marcospcury/gatsby-plugin-translate#readme",
   "dependencies": {
     "@babel/runtime": "^7.8.4",
+    "agentkeepalive": "^4.1.3",
     "axios": "^0.20.0",
     "uuid": "^8.3.1"
   },
