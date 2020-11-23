@@ -19,7 +19,7 @@ const { clearSlugSlashes, then, all, apply, pipe } = require('./utils')
 let hasValidOptions = true
 let translatedRoutes = []
 
-async function onPreInit({ cache }, options) {
+async function onPreBootstrap({ cache }, options) {
   hasValidOptions = validateOptions(options)
   await setStaticTranslations(cache, options)
 }
@@ -101,7 +101,7 @@ async function onCreatePage({ cache, page, actions }, options) {
 
 module.exports = {
   onCreateNode,
-  onPreInit,
+  onPreBootstrap,
   onCreatePage,
   onPostBootstrap,
   onPostBuild,
