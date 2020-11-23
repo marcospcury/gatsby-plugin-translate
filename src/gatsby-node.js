@@ -25,7 +25,7 @@ async function onPreInit({ cache }, options) {
 }
 
 async function onCreateNode({ node, actions: { createNode } }, options) {
-  if (hasValidOptions) {
+  if (hasValidOptions && options.translations) {
     const translation = pipe(getSelectorFromInternalType, getTranslation(options))(node)
 
     if (translation) {
