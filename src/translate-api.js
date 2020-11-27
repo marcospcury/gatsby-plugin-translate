@@ -64,6 +64,8 @@ function getTranslator(cacheResolver, source, target, apiKey) {
 }
 
 async function translate(cacheResolver, source, target, apiKey, term) {
+  if (term === null || typeof term === 'undefined') return ''
+  
   if (cacheResolver) {
     const hash = createCacheHash(source, target, term)
 
